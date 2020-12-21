@@ -18,6 +18,9 @@
         <activity android:name=".MainScreen" />
         <activity android:name=".TextReview" />
         <activity android:name=".RecordAudio" />
+        <activity android:name=".TextReview" />
+        <activity android:name=".ImageSelect" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
