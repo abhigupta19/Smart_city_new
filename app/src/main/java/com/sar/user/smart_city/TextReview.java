@@ -16,8 +16,10 @@
 
 package com.sar.user.smart_city;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,85 +36,100 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /** The main activity to provide interactions with users. */
 public class TextReview extends AppCompatActivity {
-  private static final String TAG = "TextClassificationDemo";
+    private static final String TAG = "TextClassificationDemo";
 
-  private TextClassificationClient client;
+    private TextClassificationClient client;
 
-  private TextView resultTextView;
-  private EditText inputEditText;
-  private Handler handler;
-  private ScrollView scrollView;
+    private static String resultTextView;
+    private EditText inputEditText;
+    private Handler handler;
+    private static String kaka="";
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.tfe_tc_activity_main);
-    Log.v(TAG, "onCreate");
 
-    client = new TextClassificationClient(getApplicationContext());
-    handler = new Handler();
-    Button classifyButton = findViewById(R.id.button);
-    classifyButton.setOnClickListener(
-        (View v) -> {
-          classify(inputEditText.getText().toString());
-        });
-    resultTextView = findViewById(R.id.result_text_view);
-    inputEditText = findViewById(R.id.input_text);
-    scrollView = findViewById(R.id.scroll_view);
-  }
 
-  @Override
-  protected void onStart() {
-    super.onStart();
-    Log.v(TAG, "onStart");
-    handler.post(
-        () -> {
-          client.load();
-        });
-  }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.text_review);
+        Log.v(TAG, "onCreate");
 
-  @Override
-  protected void onStop() {
-    super.onStop();
-    Log.v(TAG, "onStop");
-    handler.post(
-        () -> {
-          client.unload();
-        });
-  }
+        client = new TextClassificationClient(getApplicationContext());
+        handler = new Handler();
+        inputEditText = findViewById(R.id.input_text);
+        Button classifyButton = findViewById(R.id.nextBtn);
+        classifyButton.setOnClickListener(
+                (View v) -> {
 
-  /** Send input text to TextClassificationClient and get the classify messages. */
-  private void classify(final String text) {
-    handler.post(
-        () -> {
-          // Run text classification with TF Lite.
-          List<Result> results = client.classify(text);
 
-          // Show classification result on screen
-          showResult(text, results);
-        });
-  }
+                    Intent intent = new Intent(this, ImageSelect.class);
+                    String text=classify(inputEditText.getText().toString());
+                    Log.d("kaka",text);
+                    intent.putExtra("text", text);
+                    startActivity(intent);
+                });
 
-  /** Show classification result on the screen. */
-  private void showResult(final String inputText, final List<Result> results) {
-    // Run on UI thread as we'll updating our app UI
-    runOnUiThread(
-        () -> {
-          String textToShow = "Input: " + inputText + "\nOutput:\n";
-          for (int i = 0; i < results.size(); i++) {
-            Result result = results.get(i);
-            textToShow += String.format("    %s: %s\n", result.getTitle(), result.getConfidence());
-          }
-          textToShow += "---------\n";
 
-          // Append the result to the UI.
-          resultTextView.append(textToShow);
+    }
 
-          // Clear the input text.
-          inputEditText.getText().clear();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v(TAG, "onStart");
+        handler.post(
+                () -> {
+                    client.load();
+                });
+    }
 
-          // Scroll to the bottom to show latest entry's classification result.
-          scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
-        });
-  }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v(TAG, "onStop");
+        handler.post(
+                () -> {
+                    client.unload();
+                });
+    }
+
+    private String classify(final String text) {
+        final String[] textToShow = new String[1];
+        handler.post(
+                () -> {
+                    // Run text classification with TF Lite.
+                    List<Result> results = client.classify(text);
+
+                    // Show classification result on screen
+                    kaka = showResult(text, results);
+
+
+                });
+        Log.d("popo", "pppo  - " + textToShow[0]);
+        return textToShow[0];
+    }
+
+    /**
+     * Show classification result on the screen.
+     */
+    private String showResult(final String inputText, final List<Result> results) {
+        // Run on UI thread as we'll updating our app UI
+        final String[] textToShow = new String[1];
+        runOnUiThread(
+                () -> {
+                    textToShow[0] = "Input: " + inputText + "\nOutput:\n";
+                    for (int i = 0; i < results.size(); i++) {
+                        Result result = results.get(i);
+                        textToShow[0] += String.format("    %s: %s\n", result.getTitle(), result.getConfidence());
+                    }
+                    textToShow[0] += "---------\n";
+
+
+                    // Append the result to the UI.
+
+                    // Clear the input text.
+
+                    // Scroll to the bottom to show latest entry's classification result.
+                });
+        return textToShow[0];
+
+    }
 }

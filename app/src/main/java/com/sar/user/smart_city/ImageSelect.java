@@ -50,6 +50,7 @@ public class ImageSelect extends AppCompatActivity implements DeletePostImageLis
     private String mobileNumber;
     private MaterialButton saveBtn;
     private String imageFileName;
+    private static String text;
     private AppCompatImageView uploadImage;
 
     @Override
@@ -59,7 +60,8 @@ public class ImageSelect extends AppCompatActivity implements DeletePostImageLis
         initViews();
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(imageRV);
-
+        Intent intent=getIntent();
+        text=intent.getStringExtra("text");
         mContext = this;
         mLocalImageList = new ArrayList<>();
         handleImageRecyclerView();
@@ -86,6 +88,14 @@ public class ImageSelect extends AppCompatActivity implements DeletePostImageLis
         uploadImage = findViewById(R.id.uploadImage);
         imageRV = findViewById(R.id.imageRV);
         saveBtn = findViewById(R.id.saveBtn);
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ImageSelect.this,FinalAct.class);
+                intent.putExtra("text",text);
+                startActivity(intent);
+            }
+        });
 
         handleActions();
         handleAttachActions();

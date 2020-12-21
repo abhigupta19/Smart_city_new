@@ -61,7 +61,7 @@ public class AudioToText extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                         Toast.makeText(AudioToText.this,"Thank you",Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(AudioToText.this,MainScreen.class));
+
                         myRef.child(FirebaseAuth.getInstance().getUid().toString()).setValue(kaka).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -87,9 +87,12 @@ public class AudioToText extends AppCompatActivity {
         materialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("popo","pp  - "+classify(txvResult.getText().toString()));
-                builder1.setMessage(kaka);
+
                 AlertDialog alert11 = builder1.create();
+                alert11.setMessage(classify(txvResult.getText().toString()));
+               // Intent intent=new Intent(AudioToText.this,ImageSelect.class);
+                //intent.putExtra("text",classify(txvResult.getText().toString()));
+                //startActivity(intent);
                 alert11.show();
 
             }
